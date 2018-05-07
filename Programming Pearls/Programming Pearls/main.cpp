@@ -1,8 +1,17 @@
 #include <iostream>
 #include "MergeSort.hpp"
 #include "BubbleSort.hpp"
+#include "test.h"
+
 int main()
 {
+	//int ss;
+	//Test t(99, &ss);
+	//std::cout << std::endl;
+	//extern int sum(int);
+	//std::cout << sum(99) << std::endl;
+
+
 	//test Data
 	constexpr int num = 15;
 	int a[num] = { 3,44,38,5,47,15,36,26,27,2,46,4,19,50,48 };
@@ -10,8 +19,8 @@ int main()
 	int times = 0;
 
 
-	//MergeSort<int> foo(a,num);
-	BubbleSort<int> foo(a, num,4);
+	MergeSort<int> foo(a, num, 1);
+	//BubbleSort<int> foo(a, num,4);
 	times = foo.times;
 
 

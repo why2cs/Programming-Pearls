@@ -21,6 +21,9 @@
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BubbleSort.hpp">
@@ -28,6 +31,9 @@
     </ClInclude>
     <ClInclude Include="MergeSort.hpp">
       <Filter>Sort</Filter>
+    </ClInclude>
+    <ClInclude Include="test.h">
+      <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
