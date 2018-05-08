@@ -43,9 +43,56 @@ public:
 			}
 		}
 		break;
+
+		case 2:
+		{
+		}
+		break;
+
 		default:
 			break;
 		}
+	}
+
+	MergeSort(T *left, T *trailer) {
+		if (left < trailer-1) {
+			T *mid = left + (trailer-left) / 2;
+			T *begin = left;
+			T *end = trailer;
+			MergeSort(left, mid);
+			MergeSort(mid, trailer);
+
+			//combine the list
+			T *inOrder = new T[trailer - left];
+			auto constInOrder = inOrder;
+			auto constInOrder2 = inOrder;
+			auto left2 = mid;
+			while (left != mid && left2 != trailer) {
+				if (*left > *left2)
+				{
+					*(inOrder++) = *(left2++);
+				} else
+				{
+					*(inOrder++) = *(left++);
+				}
+			}
+			if (left == mid&&left2 != trailer) {
+				*(inOrder++) = *(left2++);
+			}
+			if (left != mid&&left2 == trailer) {
+				*(inOrder++) = *(left++);
+			}
+
+			//while (end != begin - 1) {
+			//	*(--end) = *(--inOrder);
+			//}
+			//inOrder += 1;
+
+			while (constInOrder != inOrder)
+				*(begin++) = *(constInOrder++);
+
+			delete[] constInOrder2;
+		} 
 	}
 
 	mutable int times = 0;

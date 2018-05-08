@@ -19,7 +19,8 @@ int main()
 	int times = 0;
 
 
-	MergeSort<int> foo(a, num, 1, a);
+	//MergeSort<int> foo(a, num, 1, a);
+	MergeSort<int> foo(a, a + num);
 	//BubbleSort<int> foo(a, num,4);
 	times = foo.times;
 
