@@ -1,106 +1,103 @@
+/*
+1. 归并排序的基础思想就是分治。
+
+2. 归并排序，方法1步骤
+	① 若元素个数大于1，分治成两个已经排序的子序列。
+	② 判断前子序列尾部值和后子序列头部值大小。若尾小于首，结束。
+	③ 申请一段临时空间用作已排序队列。
+	④ 将两个子序列头部较小的那个元素放入已排序序列中，递增相应迭代器。
+	⑤ 用已排序序列替换原序列。
+	⑥ 释放临时空间。
+
+3. 归并排序，方法2步骤（避免了多次请求和释放堆空间）
+	① 申请一段临时空间，用于存放前半段序列。
+	② 调用排序函数，传入空间地址参数。
+		① 若元素个数大于1，分治成两个已经排序的子序列。
+		② 判断前子序列尾部值和后子序列头部值大小。若尾小于首，结束。
+		③ 将前子序列拷贝到临时空间中。
+		④ 将临时序列和后子序列头部较小的那个元素放入原序列中，递增各自迭代器。
+	③ 释放临时空间。
+*/
+
 template<typename T>
 class MergeSort {
 public:
-	MergeSort(T *ptr, int num, int random,T *abc) {
-		switch (random)
-		{
-		case 1:
-		{//
-			if (num > 1) {
-				auto result = new T[num];
+	MergeSort(T *ptr, int num) {
+		if (num > 1) {
+			MergeSort(ptr, num / 2);
+			MergeSort(ptr + num / 2, num - num / 2);
 
-				MergeSort(ptr, num / 2, random,abc);
-				MergeSort(ptr + num / 2, num - num / 2, random,abc);
-				int resultIndex = 0;
-				T *ptrL = ptr, *ptrR = ptr + num / 2;
-				for (; (ptrL != ptr + num / 2) && (ptrR != ptr + num); ++resultIndex) {
-					if (*ptrL > *ptrR)
-						*(result + resultIndex) = *(ptrR++);
-					else
-						*(result + resultIndex) = *(ptrL++);
-				}
-				while ((ptrL == ptr + num / 2) && (ptrR != ptr + num))
-					*(result + resultIndex++) = *(ptrR++);
-				while ((ptrR == ptr + num) && (ptrL != ptr + num / 2))
-					*(result + resultIndex++) = *(ptrL++);
-
-				for (int i = 0; i != num; ++i) {
-					*(ptr + i) = *(result + i);
-				}
-
-				for (int i = 0; i != 15; ++i) {
-					std::cout << *(abc + i) << " ";
-				}
-				std::cout << std::endl;
-
-				delete[] result;
-			} else {
-				for (int i = 0; i != 15; ++i) {
-					std::cout << *(abc + i) << " ";
-				}
-				std::cout << std::endl;
-				return;
+			int resultIndex = 0;
+			T *ptrL = ptr, *ptrR = ptr + num / 2;
+			auto result = new T[num];
+			for (; (ptrL != ptr + num / 2) && (ptrR != ptr + num); ++resultIndex) {
+				if (*ptrL > *ptrR)
+					*(result + resultIndex) = *(ptrR++);
+				else
+					*(result + resultIndex) = *(ptrL++);
 			}
-		}
-		break;
+			while ((ptrL == ptr + num / 2) && (ptrR != ptr + num))
+				*(result + resultIndex++) = *(ptrR++);
+			while ((ptrR == ptr + num) && (ptrL != ptr + num / 2))
+				*(result + resultIndex++) = *(ptrL++);
 
-		case 2:
-		{
-		}
-		break;
+			for (int i = 0; i != num; ++i)
+				*(ptr + i) = *(result + i);
 
-		default:
-			break;
+			delete[] result;
 		}
 	}
 
 	MergeSort(T *left, T *trailer) {
-		if (left < trailer-1) {
-			T *mid = left + (trailer-left) / 2;
-			T *begin = left;
-			T *end = trailer;
+		if (left < trailer - 1) {
+			T *mid = left + (trailer - left) / 2;
+			const T *begin = left;
 			MergeSort(left, mid);
 			MergeSort(mid, trailer);
 
 			//combine the list
-			T *inOrder = new T[trailer - left];
-			auto constInOrder = inOrder;
-			auto constInOrder2 = inOrder;
-			auto left2 = mid;
-			while (left != mid && left2 != trailer) {
-				if (*left > *left2)
-				{
+			if (*(mid - 1) > *mid) {
+				T *inOrder = new T[trailer - left];
+				auto left2 = mid;
+				while (left != mid && left2 != trailer)
+					*(inOrder++) = (*left > *left2) ? *(left2++) : *(left++);
+				while (left == mid&&left2 != trailer)
 					*(inOrder++) = *(left2++);
-				} else
-				{
+				while (left != mid&&left2 == trailer)
 					*(inOrder++) = *(left++);
+
+				while (trailer != begin)
+					*(--trailer) = *(--inOrder);
+				delete[]inOrder;
+			}
+		}
+	}
+
+	MergeSort(T* first, T *trailer, int) {
+		T* buffer = new T[(trailer - first + 1) / 2];
+		MergeSortSub(first, trailer, buffer);
+		delete[] buffer;
+	}
+	void MergeSortSub(T *first, T *trailer, T *  const leftHalfBuffer) {
+		if (trailer - first > 1) {
+			T *mid = first + (trailer - first) / 2;
+			MergeSortSub(first, mid, leftHalfBuffer);
+			MergeSortSub(mid, trailer, leftHalfBuffer);
+
+			if (*(mid - 1) > *mid) {
+				int leftSize = mid - first;
+				int rightSize = trailer - mid;
+				for (int i = 0; mid != first + i; leftHalfBuffer[i] = first[i], ++i);
+				for (int originIndex = 0, leftIndex = 0, rightIndex = 0; leftIndex < leftSize || rightIndex < rightSize;) {
+					if (leftIndex < leftSize && (rightIndex == rightSize || leftHalfBuffer[leftIndex] <= mid[rightIndex]))
+						first[originIndex++] = leftHalfBuffer[leftIndex++];
+					if (rightIndex < rightSize && (leftIndex == leftSize || leftHalfBuffer[leftIndex] > mid[rightIndex]))
+						first[originIndex++] = mid[rightIndex++];
 				}
 			}
-			if (left == mid&&left2 != trailer) {
-				*(inOrder++) = *(left2++);
-			}
-			if (left != mid&&left2 == trailer) {
-				*(inOrder++) = *(left++);
-			}
-
-			//while (end != begin - 1) {
-			//	*(--end) = *(--inOrder);
-			//}
-			//inOrder += 1;
-
-			while (constInOrder != inOrder)
-				*(begin++) = *(constInOrder++);
-
-			delete[] constInOrder2;
-		} 
+		}
 	}
 
 	mutable int times = 0;
 
-private:
-	void swapValue(T &a, T &b) {
-		T temp = a;
-		a = b;
-		b = temp;
-	}
 };
