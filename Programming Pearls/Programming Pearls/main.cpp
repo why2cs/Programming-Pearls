@@ -1,6 +1,7 @@
 #include <iostream>
 #include "MergeSort.hpp"
 #include "BubbleSort.hpp"
+#include "SelectionSort.hpp"
 #include "test.h"
 
 int main()
@@ -18,9 +19,10 @@ int main()
 	int result[num] = { 2,3,4,5,15,19,26,27,36,38,44,46,47,48,50};
 	int times = 0;
 
-	MergeSort<int> foo(a, a + num, 0,0);
+	//MergeSort<int> foo(a, a + num, 0,0);
 	//BubbleSort<int> foo(a, num,4);
 	//times = foo.times;
+	SelectionSort<int> foo(a, num);
 
 
 	//test Output
