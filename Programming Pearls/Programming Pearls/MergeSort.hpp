@@ -19,6 +19,8 @@
 	③ 释放临时空间。
 */
 
+#include <cmath>
+
 template<typename T>
 class MergeSort {
 public:
@@ -98,6 +100,30 @@ public:
 		}
 	}
 
-	mutable int times = 0;
+	MergeSort(T *first, T *trailer, int, int) {
+		double loopTimes = log(trailer - first) / log(2);	//整个序列的遍历次数，需要向上取整
+		for (int i = 0; i < ceil(loopTimes); ++i) {			
+			int leftSize = static_cast<int>(pow(2, i));		//单次遍历过程中，进行比较的左侧序列的长度
+			auto left = new T[leftSize];
+
+			for (auto subfirst = first, subright = subfirst + leftSize, subtrailer = subfirst + 2 * leftSize;
+				subright < trailer;
+				subfirst = subtrailer, subright = subfirst + leftSize, subtrailer = subfirst + 2 * leftSize) {		//单次遍历过程中，循坏比较操作
+				if (subtrailer > trailer)																			//处理右侧序列长度较短的情况
+					subtrailer = trailer;
+				for (int i = 0; i < leftSize; ++i) {																//拷贝左侧序列到临时空间
+					left[i] = subfirst[i];
+				}
+				for (int f = 0, l = 0, r = 0; l < leftSize || r < subtrailer - subright; ) {						//比较操作
+					if ((l < subright - subfirst) && ((r == subtrailer - subright) || left[l] <= subright[r]))
+						subfirst[f++] = left[l++];
+					if ((r < subtrailer - subright) && ((l == subright - subfirst) || left[l] > subright[r]))
+						subfirst[f++] = subright[r++];
+				}
+			}
+
+			delete[]left;
+		}
+	}
 
 };
